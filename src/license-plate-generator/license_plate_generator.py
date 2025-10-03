@@ -6,6 +6,9 @@ By Sam Davidson
 """
 
 
+from random import randint
+
+
 user_string = ""
 altered_string = ""
 shorten = False
@@ -88,15 +91,16 @@ def shorten_string():
         # ask the user if they want to continue with the current shortened text, or use their original text
         print("Your text is too long. The program has failed to shorten it down to 7 characters.")
         print(f"Would you like to continue with the best this program can do ({altered_string})?")
-        print(f"If your answer is No, the program will continue with the orignal string ({user_string})")
+        print(f"If your answer is No, the program will continue with the original string ({user_string})")
         if not input("(Y/N): ").upper() == "Y":
             altered_string = user_string.upper()
 
 # check for any words that can be replaced with less characters (for > 4, your > ur, ect)
 def replace_words():
-    global altered_string
+    global altered_string, user_string
     
     # use user_string becuase it has spaces
+    altered_string = user_string.upper()
 
     # letters
     #   a
@@ -142,26 +146,61 @@ def replace_words():
 
     # numbers
     #   1
+    altered_string = altered_string.replace("ONE", "1")
     #   2
+    altered_string = altered_string.replace("TWO", "2")
+    altered_string = altered_string.replace("TOO", "2")
+    altered_string = altered_string.replace("TO", "2")
     #   3
+    altered_string = altered_string.replace("THREE", "3")
     #   4
     altered_string = altered_string.replace("FOR", "4")
     altered_string = altered_string.replace("FOURTY ", "4")
     altered_string = altered_string.replace("FOUR", "4")
     #   5
+    altered_string = altered_string.replace("FIVE", "5")
     #   6
+    altered_string = altered_string.replace("SIX", "6")
     #   7
+    altered_string = altered_string.replace("SEVEN", "7")
     #   8
+    altered_string = altered_string.replace("EIGHT", "8")
     #   9
+    altered_string = altered_string.replace("NINE", "9")
     #   10
+    altered_string = altered_string.replace("TEN", "10")
 
 # remove letters that are the same as the previous ones
 def remove_duplicates():
-    pass
+    global altered_string
+    temp_string = ""
+    l_index = 0
+
+    for letter in altered_string:
+        if l_index != 0 and letter == altered_string[l_index - 1]:
+            pass
+            #print(letter)
+        else:
+            temp_string = temp_string + letter
+
+        
+        l_index += 1
+
+    altered_string = temp_string.replace(" ", "")
 
 # remove random vowels until the text fits
 def remove_vowels():
-    pass
+    global altered_string
+    place_in_string = 0
+    while len(altered_string) > 7 and altered_string.count("A") + altered_string.count("E") + altered_string.count("I") + altered_string.count("O") + altered_string.count("U") > 0:
+        if place_in_string > len(altered_string) - 1:
+            place_in_string = 0
+        
+        if altered_string[place_in_string] in "AEIOU" and randint(0, 100) > 25:
+            altered_string = altered_string[0:place_in_string] + altered_string[place_in_string + 1:len(altered_string)]
+
+        place_in_string += 1
+        #print(altered_string)
 
 if __name__ == "__main__":
     main()
