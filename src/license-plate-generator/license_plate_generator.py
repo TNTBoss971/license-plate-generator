@@ -45,6 +45,8 @@ def ask_for_input():
 
     print(f"Altered Text: {altered_string}")
 
+    translate_string()
+
 # check for any invalid characters
 def check_for_invalid_characters():
     global user_string, altered_string
@@ -201,6 +203,15 @@ def remove_vowels():
 
         place_in_string += 1
         #print(altered_string)
+
+def translate_string():
+    convert_into_leet_speak()
+
+
+def convert_into_leet_speak() :
+    pass
+
+
 
 if __name__ == "__main__":
     main()
