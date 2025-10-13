@@ -11,6 +11,7 @@ from random import randint
 
 user_string = ""
 altered_string = ""
+max_length = 8
 shorten = False
 
 
@@ -18,10 +19,10 @@ def main():
     ask_for_input()
 
 
-
+# 7
 # ask the user for the text they will like translated
 def ask_for_input():
-    global user_string, altered_string
+    global user_string, altered_string, max_length
 
     while True:
         # ask for the input
@@ -31,7 +32,7 @@ def ask_for_input():
             break
 
     # if the text is too long, ask the user if they want it to be shortened
-    if len(user_string) > 7:
+    if len(user_string) > max_length:
         print(f"Your text ({user_string}) is too long to fit on a license plate!")
         if input("Would you like your text to automatically be shortened? (Y/N): ").upper() == "Y":
             shorten = True
@@ -69,29 +70,29 @@ def check_for_invalid_characters():
 
 # this function will call a variety of functions in order to make the text fit
 def shorten_string():
-    global altered_string, user_string
+    global altered_string, user_string, max_length
 
     print("...")
 
     # FIRST ATTEMPT: remove spaces
     altered_string = altered_string.replace(" ", "")
 
-    if len(altered_string) > 7: 
+    if len(altered_string) > max_length: 
         # SECOND ATTEMPT: replace words with shorter counterparts
         replace_words()
 
-    if len(altered_string) > 7:
+    if len(altered_string) > max_length:
         # THIRD ATTEMPT: remove duplicate letters
         remove_duplicates()
 
-    if len(altered_string) > 7:
+    if len(altered_string) > max_length:
         # FOURTH ATTEMPT: remove random vowels
         remove_vowels()
     
-    if len(altered_string) > 7:
+    if len(altered_string) > max_length:
         # The program has failed to shorten the text enough
         # ask the user if they want to continue with the current shortened text, or use their original text
-        print("Your text is too long. The program has failed to shorten it down to 7 characters.")
+        print(f"Your text is too long. The program has failed to shorten it down to {max_length} characters.")
         print(f"Would you like to continue with the best this program can do ({altered_string})?")
         print(f"If your answer is No, the program will continue with the original string ({user_string})")
         if not input("(Y/N): ").upper() == "Y":
@@ -179,10 +180,7 @@ def remove_duplicates():
     l_index = 0
 
     for letter in altered_string:
-        if l_index != 0 and letter == altered_string[l_index - 1]:
-            pass
-            #print(letter)
-        else:
+        if l_index == 0 or letter != altered_string[l_index - 1]:
             temp_string = temp_string + letter
 
         
@@ -192,25 +190,53 @@ def remove_duplicates():
 
 # remove random vowels until the text fits
 def remove_vowels():
-    global altered_string
+    global altered_string, max_length
     place_in_string = 0
-    while len(altered_string) > 7 and altered_string.count("A") + altered_string.count("E") + altered_string.count("I") + altered_string.count("O") + altered_string.count("U") > 0:
+    while len(altered_string) > max_length and altered_string.count("A") + altered_string.count("E") + altered_string.count("I") + altered_string.count("O") + altered_string.count("U") > 0:
         if place_in_string > len(altered_string) - 1:
             place_in_string = 0
         
-        if altered_string[place_in_string] in "AEIOU" and randint(0, 100) > 25:
-            altered_string = altered_string[0:place_in_string] + altered_string[place_in_string + 1:len(altered_string)]
+        if altered_string[place_in_string] in "AEIOU" and randint(0,100) > 25:
+            altered_string = replace_character(altered_string, place_in_string, "")
 
         place_in_string += 1
         #print(altered_string)
 
+
 def translate_string():
+    global user_string, altered_string
     convert_into_leet_speak()
 
+    print("The translating process is complete!")
+    print(f'Input: "{user_string}"')
+    print(f'Final result: "{altered_string}"')
 
-def convert_into_leet_speak() :
-    pass
 
+def convert_into_leet_speak():
+    global altered_string
+    place_in_string = 0
+    for char in altered_string:
+        if char == "A":
+            altered_string = replace_character(altered_string, place_in_string, "4")
+        if char == "B":
+            altered_string = replace_character(altered_string, place_in_string, "8")
+        if char == "E":
+            altered_string = replace_character(altered_string, place_in_string, "3")
+        if char == "L":
+            altered_string = replace_character(altered_string, place_in_string, "1")
+        if char == "O":
+            altered_string = replace_character(altered_string, place_in_string, "0")
+        if char == "S":
+            altered_string = replace_character(altered_string, place_in_string, "5")
+        if char == "T":
+            altered_string = replace_character(altered_string, place_in_string, "7")
+        if char == "Z":
+            altered_string = replace_character(altered_string, place_in_string, "2")
+        place_in_string += 1
+
+def replace_character(strng, ind, charcter):
+    returned_string = strng[0:ind] + charcter + strng[ind + 1:len(strng)]
+    return returned_string
 
 
 if __name__ == "__main__":
