@@ -23,21 +23,25 @@ def main():
     ask_for_input()
 
 
-
-# ask the user for the text they will like translated
 def ask_for_input():
+    """
+    asks the user for the text they will like translated
+    """
 
     while True:
         # ask for the input
-        store.user_str = input("Input string you want to be translated: ")
+        store.user_str = input("Input string to be translated: ")
         store.alt_str = store.user_str.upper()
         if check_for_invalid_characters():
             break
 
-    # if the text is too long, ask the user if they want it to be shortened
+    # if the text is too long, ask the user if they want it to be 
+    # shortened
     if len(store.user_str) > max_len:
-        print(f"Your text ({store.user_str}) is too long to fit on a license plate!")
-        if input("Would you like your text to automatically be shortened? (Y/N): ").upper() == "Y":
+        print(f"{store.user_str} is longer than {max_len} characters,")
+        print("and won't be able to fit on a license plate!")
+        print("Do you want your text to automatically be shortened?")
+        if input("(Y/N): ").upper() == "Y":
             shorten = True
         else:
             shorten = False
@@ -47,19 +51,22 @@ def ask_for_input():
     if shorten == True:
         shorten_string()
 
-    # print(f"Altered Text: {store.altered_string}")
 
     translate_string()
 
-# check for any invalid characters
 def check_for_invalid_characters():
+    """
+    checks the user's input for any invalid characters
+    """
 
-    # invalid_characters will store the characters so we can print them later
+
+    # invalid_characters will store the characters to print later
     invalid_characters = []
 
     for i in range(len(store.alt_str)):
-        # the program will only accept letters, numbers, and spaces \/
-        if not store.alt_str[i] in "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ":
+        # the program will only accept letters, numbers, and spaces
+        valid_char = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 "
+        if not store.alt_str[i] in valid_char:
             invalid_characters.append(store.alt_str[i])
 
     if len(invalid_characters) > 0:
@@ -70,8 +77,11 @@ def check_for_invalid_characters():
     else:
         return True
 
-# this function will call a variety of functions in order to make the text fit
 def shorten_string():
+    """
+    calls a variety of functions in an effort to reduce the length of
+    of the input string
+    """
 
     print("...")
 
@@ -92,16 +102,22 @@ def shorten_string():
     
     if len(store.alt_str) > max_len:
         # The program has failed to shorten the text enough
-        # ask the user if they want to continue with the current shortened text, or use their original text
-        print(f"Your text is too long. The program has failed to shorten it down to {max_len} characters.")
-        print(f"Would you like to continue with the best this program can do ({store.alt_str})?")
-        print(f"If your answer is No, the program will continue with the original string ({store.user_str})")
+        # ask the user if they want to continue with the current 
+        # shortened text, or use their original text
+        print(f"""Your text is too long. The program has failed to 
+shorten it down to {max_len} characters. Would you like to continue with
+the best this program can do ({store.alt_str})? If your answer is No, 
+the program will continue with the input string ({store.user_str})""")
         if not input("(Y/N): ").upper() == "Y":
             store.alt_str = store.user_str.upper()
     
 
-# check for any words that can be replaced with less characters (for > 4, your > ur, ect)
+
 def replace_words():
+    """
+    check for any words that can be replaced with less characters
+    (for > 4, your > ur, ect)
+    """
     
     # use user_string becuase it has spaces
     store.alt_str = store.user_str.upper()
@@ -190,42 +206,48 @@ def remove_duplicates():
     # store.alt_str = store.alt_str.replace(" ", "")
 
 
-"""
-remove random vowels until the text fits
-"""
+
 def remove_vowels():
-    place_in_string = 0
+    """
+    remove random vowels until the text is equal to or less than the
+    limit
+    """
+    pos = 0
     # find vowels that are next to spaces
     vowel_indexs = find_end_vowels(store.alt_str)
 
-    while len(store.alt_str.replace(" ", "")) > max_len and get_vowel_count(store.alt_str) > 0:
-        if place_in_string > len(store.alt_str) - 1:
-            place_in_string = 0
+    while (len(store.alt_str.replace(" ", "")) > max_len and
+     get_vowel_count(store.alt_str) > 0):
+        if pos > len(store.alt_str) - 1:
+            pos = 0
         
-        if store.alt_str[place_in_string] in "AEIOU" and randint(0,100) > 75:
+        if store.alt_str[pos] in "AEIOU" and randint(0,100) > 75:
             # priortize removing vowels that are not next to spaces
             # as vowels on the end tend to be important
-            if (not place_in_string in vowel_indexs or get_vowel_count(store.alt_str) <= len(vowel_indexs)):
+            if (not pos in vowel_indexs or 
+            get_vowel_count(store.alt_str) <= len(vowel_indexs)):
                 # replace the vowel with nothing, removing it
-                store.alt_str = replace_character(store.alt_str, place_in_string, "")
+                store.alt_str = replace_char(store.alt_str,pos,"")
                 # as the indexs are now not accurate, refind vowels
                 vowel_indexs = find_end_vowels(store.alt_str)
 
-        place_in_string += 1
+        pos += 1
         #print(store.altered_string)
     store.alt_str = store.alt_str.replace(" ", "")
 
-"""
-find vowels that are on the start and end of words
-"""
+
 def find_end_vowels(txt: str):
+    """
+    find vowels that are on the start and end of words
+    """
     pos = 0
     index_output = []
     # for each letter in the input
     for letter in txt:
         # if the letter is on the very start or end,
         # or it has a space on either side
-        if pos==len(txt)-1 or pos==0 or txt[pos-1]==" " or txt[pos+1]==" ":
+        if (pos==len(txt)-1 or pos==0 or txt[pos-1]==" " or 
+        txt[pos+1]==" "):
             # and its a vowel
             if letter in "AEIOU":
                 # add the vowel to the output
@@ -241,42 +263,50 @@ def translate_string():
     print(f'Input: "{store.user_str}"')
     print(f'Final result: "{store.alt_str}"')
 
-"""
-replace random characters in string with leet speak
-"""
+
 def convert_into_leet_speak():
-    place_in_string = 0
+    """
+    replace random characters in string with leet speak
+    """
+    pos = 0
     for char in store.alt_str:
         if randint(0, 100) > 75:
             if char == "A":
-                store.alt_str = replace_character(store.alt_str, place_in_string, "4")
+                store.alt_str = replace_char(store.alt_str, pos, "4")
             if char == "B":
-                store.alt_str = replace_character(store.alt_str, place_in_string, "8")
+                store.alt_str = replace_char(store.alt_str, pos, "8")
             if char == "E":
-                store.alt_str = replace_character(store.alt_str, place_in_string, "3")
+                store.alt_str = replace_char(store.alt_str, pos, "3")
             if char == "L":
-                store.alt_str = replace_character(store.alt_str, place_in_string, "1")
+                store.alt_str = replace_char(store.alt_str, pos, "1")
             if char == "O":
-                store.alt_str = replace_character(store.alt_str, place_in_string, "0")
+                store.alt_str = replace_char(store.alt_str, pos, "0")
             if char == "S":
-                store.alt_str = replace_character(store.alt_str, place_in_string, "5")
+                store.alt_str = replace_char(store.alt_str, pos, "5")
             if char == "T":
-                store.alt_str = replace_character(store.alt_str, place_in_string, "7")
+                store.alt_str = replace_char(store.alt_str, pos, "7")
             if char == "Z":
-                store.alt_str = replace_character(store.alt_str, place_in_string, "2")
-        place_in_string += 1
+                store.alt_str = replace_char(store.alt_str, pos, "2")
+        pos += 1
 
-def replace_character(strng, ind, charcter):
-    returned_string = strng[0:ind] + charcter + strng[ind + 1:len(strng)]
+def replace_char(strng, ind, character):
+    """
+    replace the character at the index of a given string and replace it
+    with an other character 
+    """
+    returned_string = strng[0:ind]+character+strng[ind+1:len(strng)]
     return returned_string
 
 def get_vowel_count(strng):
+    """
+    counts the number of vowels in a string
+    """
     count = 0
-    count += store.alt_str.count("A")
-    count += store.alt_str.count("E")
-    count += store.alt_str.count("I")
-    count += store.alt_str.count("O")
-    count += store.alt_str.count("U")
+    count += strng.count("A")
+    count += strng.count("E")
+    count += strng.count("I")
+    count += strng.count("O")
+    count += strng.count("U")
     return count
 
 if __name__ == "__main__":
